@@ -44,8 +44,6 @@ public class CommandLineInserter implements CommandLineRunner{
 		//insert enforces a new entry comes
 		//no option of update
 		
-		
-		
 		List<ProductReview> productReviews2 = IntStream.rangeClosed(4, 8)
 				 .boxed()
 				 .map(rating -> new ProductReview("user"+rating*rating, rating))
@@ -56,10 +54,20 @@ public class CommandLineInserter implements CommandLineRunner{
 				productReviews2, deliveryInfo2);
 		
 		
+		List<ProductReview> productReviews3 = IntStream.rangeClosed(5, 10)
+				 .boxed()
+				 .map(rating -> new ProductReview("user"+rating, rating))
+				 .collect(Collectors.toList());
+		Deliveryinfo deliveryInfo3 = new Deliveryinfo(LocalDate.now(), 11.11, true);
+		
+		LegoSet legoSet3 = new LegoSet("batman", "complicated atom bomb controller", DifficultyLevel.NOT_FOUND,
+				productReviews3, deliveryInfo3);
+		
+		
 		//legoSetRepository.insert(legoSet1);
 		//legoSetRepository.insert(legoSet2);
 		//we can use below for batch insert
-		legoSetRepository.insert(Arrays.asList(legoSet1,legoSet2));
+		legoSetRepository.insert(Arrays.asList(legoSet1,legoSet2,legoSet3));
 	}
 
 }

@@ -1,6 +1,7 @@
 package com.learning.legostore.controller;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.learning.legostore.document.DifficultyLevel;
 import com.learning.legostore.document.LegoSet;
 import com.learning.legostore.repository.LegoSetRepository;
 
@@ -53,7 +55,7 @@ public class LegoStoreController {
 	
 	@PostMapping
 	public ResponseEntity<LegoSet> createNew(@RequestBody LegoSet legoSet){
-		if(!StringUtils.isEmpty(legoSet.getId())) {
+		if(legoSet.getId() != null) {
 			//not using exception handling
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		}
@@ -80,4 +82,68 @@ public class LegoStoreController {
 		
 		return new ResponseEntity<Void>(HttpStatus.NO_CONTENT);
 	}
+	
+	@GetMapping("/themeExact/{themeStr}")
+	public ResponseEntity<List<LegoSet>> findByThemeExactMatch(@PathVariable("themeStr") String theme){
+		
+		List<LegoSet> fetchedItems = respository.findByTheme(theme);
+		if(fetchedItems == null || fetchedItems.isEmpty()) {
+			return new ResponseEntity<List<LegoSet>>(HttpStatus.NOT_FOUND);
+		}
+		
+		return new ResponseEntity<List<LegoSet>>(fetchedItems, HttpStatus.OK);
+		
+	}
+	
+	@GetMapping("/theme/{themeStr}")
+	public ResponseEntity<List<LegoSet>> findByThemeContaining(@PathVariable("themeStr") String theme){
+		
+		List<LegoSet> fetchedItems = respository.findByThemeContainsIgnoreCase(theme);
+		if(fetchedItems == null || fetchedItems.isEmpty()) {
+			return new ResponseEntity<List<LegoSet>>(HttpStatus.NOT_FOUND);
+		}
+		
+		return new ResponseEntity<List<LegoSet>>(fetchedItems, HttpStatus.OK);
+		
+	}
+	
+	@GetMapping("/themeStarts/{themeStr}/difficultyLevel/{difficultyLevel}")
+	public ResponseEntity<List<LegoSet>> findByThemeStartsAndDifficulty(@PathVariable("themeStr") String theme , 
+			@PathVariable("difficultyLevel") DifficultyLevel difficultyLevel
+			){
+		
+		List<LegoSet> fetchedItems = respository.findByThemeStartsWithAndDifficultyLevel(theme, difficultyLevel);
+		if(fetchedItems == null || fetchedItems.isEmpty()) {
+			return new ResponseEntity<List<LegoSet>>(HttpStatus.NOT_FOUND);
+		}
+		
+		return new ResponseEntity<List<LegoSet>>(fetchedItems, HttpStatus.OK);
+		
+	}
+	
+	@GetMapping("/priceLessThan/{price}")
+	public ResponseEntity<List<LegoSet>> findByPriceLessThan(@PathVariable("price") double price){
+		
+		List<LegoSet> fetchedItems = respository.findItemsWithDeliveryFeeGreaterThanVal(price);
+		if(fetchedItems == null || fetchedItems.isEmpty()) {
+			return new ResponseEntity<List<LegoSet>>(HttpStatus.NOT_FOUND);
+		}
+		
+		return new ResponseEntity<List<LegoSet>>(fetchedItems, HttpStatus.OK);
+		
+	}
+	//return lego items with any one of the review be perfect (10/10)
+	@GetMapping("/perfectRating")
+	public ResponseEntity<List<LegoSet>> findByPerfectRating(){
+		
+		List<LegoSet> fetchedItems = respository.findAllByPerfectRating();
+		if(fetchedItems == null || fetchedItems.isEmpty()) {
+			return new ResponseEntity<List<LegoSet>>(HttpStatus.NOT_FOUND);
+		}
+		
+		return new ResponseEntity<List<LegoSet>>(fetchedItems, HttpStatus.OK);
+		
+	}
+	
+	
 }

@@ -45,3 +45,9 @@ save- > if id is missing that a new document is created in colection with autoge
 	   					-> if id exist in DB it overrides the other fields of document with the same id and a new document is not inserted in db
 	   					
 In mongo DB if id is given the same id can be used to insert otherwise autogenrated id is used
+
+spring data JPA respository method composition can handle lot of scenarios however
+in scenario like we want to query on bassis on embeded document property or embedded array document filed we need @query
+
+method composition is declarative but @query is imperative as we have do tell api how to do but in declarative we just tell what we want
+,and framework will work on implementation

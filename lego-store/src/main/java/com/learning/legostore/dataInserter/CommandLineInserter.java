@@ -63,11 +63,20 @@ public class CommandLineInserter implements CommandLineRunner{
 		LegoSet legoSet3 = new LegoSet("batman", "complicated atom bomb controller", DifficultyLevel.NOT_FOUND,
 				productReviews3, deliveryInfo3);
 		
+		List<ProductReview> productReviews4 = IntStream.rangeClosed(6, 10)
+				 .boxed()
+				 .map(rating -> new ProductReview("user"+rating, rating))
+				 .collect(Collectors.toList());
+		Deliveryinfo deliveryInfo4 = new Deliveryinfo(LocalDate.now(), 101.10, true);
+		
+		LegoSet legoSet4 = new LegoSet("batman", "alpha male lego", DifficultyLevel.HARD,
+				productReviews4, deliveryInfo4);
+		
 		
 		//legoSetRepository.insert(legoSet1);
 		//legoSetRepository.insert(legoSet2);
 		//we can use below for batch insert
-		legoSetRepository.insert(Arrays.asList(legoSet1,legoSet2,legoSet3));
+		legoSetRepository.insert(Arrays.asList(legoSet1,legoSet2,legoSet3 , legoSet4));
 	}
 
 }

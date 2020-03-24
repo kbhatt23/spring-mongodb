@@ -51,3 +51,46 @@ in scenario like we want to query on bassis on embeded document property or embe
 
 method composition is declarative but @query is imperative as we have do tell api how to do but in declarative we just tell what we want
 ,and framework will work on implementation
+
+Sorting can be needed in 3 scenarios:
+a . methods out of the box presented in mongorepostiry interface :
+Just add sort object and pass from service class and proxy will use it as oob methods also have 
+overloadded methods containsing sort
+
+b. methods created by us:
+Add another method argument as Sort and pass it from service class
+proxy will add this logic on its own
+
+c. methods containsing @query 
+We need to add sort by or oder by condition in query
+
+Query DSL can be used to replace @query annotation in mongoRepository
+This can handle complex scenrios of filtering and also in case field values in mongo db is changed we hve to modify at all places
+
+Using Query DSL we can add complex predicates and extend QueryDSLrepostiory at the @repository interface and then each method will get overloaded
+methods with Predicates
+
+Code changes:
+step1 : add dependecy for apt-query-dsl
+step2 : add maven build tag for query dsl : when we do clan packge all @documents will get scanned and its own queryDSL classes will get generated
+
+We can create predicates using these class generated in target folder
+
+MongoTempalte is similar to mongoReepository but it is more suited when more complex scenarios comes part from data CRUD and filtering
+For example advance filtering can be done using QueryDSL in mongoREpsoitory
+but when reporting and data projection is needed in mongo db collection then we can use mongoTempalte
+
+Data projection is way of extracting real content in mongo collections and conerting into another model whihc is better suited for reporting
+Very advanced Business intelligence reposrting is not suited for NOSQL
+but basic ones can be done using data projection using aggregate method in mongo template 
+
+Mongo template can not create indexes on its own
+MongoRepository can do it : just using insert method it creates index for properpties annotated with @indexed
+
+so mongorepostiory should be sued in inserting scenarios
+in advanced filterting and search we can use mongoRepsository
+but for advanced reporting and data projection we should use mongotempalte
+
+===Full Text Search==
+A full text search can give input to any string and this tring can be value of any n number of fields or properties of document
+we can get list of documents back for whome the whole string input is present as value of any number(fixed) field values

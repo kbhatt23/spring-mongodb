@@ -1,7 +1,11 @@
 package com.learning.legostore.document;
 
-public class ProductReview {
+import org.springframework.data.mongodb.core.index.TextIndexed;
 
+public class ProductReview {
+	//enables text index for full text search
+	
+	@TextIndexed
 	private String userName;
 	
 	private int rating;

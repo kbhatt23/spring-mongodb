@@ -1,11 +1,13 @@
 package com.learning.legostore.controller;
 
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Predicate;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
-import org.springframework.data.mongodb.core.query.TextCriteria;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.StringUtils;
@@ -20,23 +22,47 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.learning.legostore.document.DifficultyLevel;
 import com.learning.legostore.document.LegoSet;
+import com.learning.legostore.document.QLegoSet;
 import com.learning.legostore.repository.LegoSetRepository;
+import com.querydsl.core.types.dsl.BooleanExpression;
 
 @RestController
-@RequestMapping("/v1/legoStore/legoItems")
-public class LegoStoreController {
+@RequestMapping("/v2/legoStore/legoItems")
+public class LegoStoreControllerQueryDSL {
 	
 	@Autowired
 	private LegoSetRepository respository;
 	//sort by name
 	private Sort sortAscending = Sort.by("name").ascending();
+	
+	//filter added so taht it can be reused at other places
+	//we can move this to constatn file later
+	
+	QLegoSet qLegoSet = new QLegoSet("legoSet");
+	//filter for in stock items
+	BooleanExpression instockITem  = qLegoSet.deliveryInfo.instock.isTrue();
+	
+	//filter for price
+	BooleanExpression filterPRice = qLegoSet.deliveryInfo.deliveryFee.lt(11.12D);
+	
+	//filter for good rating
+	BooleanExpression filterGoodRating = qLegoSet.productReview.any().rating.eq(10);
+	
+	//filter for all review to be empty
+	BooleanExpression filterEmptyRating = qLegoSet.productReview.isEmpty();
+	
+	BooleanExpression filterOutOfStock = qLegoSet.deliveryInfo.instock.isFalse();
+	
 	@GetMapping
 	public ResponseEntity<List<LegoSet>> findAll(){
 		
 		//List<LegoSet> legoSets = respository.findAll();
 		
-		List<LegoSet> legoSets = respository.findAll(sortAscending);
-		
+		Iterator<LegoSet> itemsIterator = respository.findAll(instockITem.and(filterPRice).and(filterGoodRating)).iterator();
+		List<LegoSet> legoSets = new ArrayList<LegoSet>();
+		while(itemsIterator.hasNext()) {
+			legoSets.add(itemsIterator.next());
+		}
 		
 		if(legoSets == null || legoSets.isEmpty()) {
 			//or else we cna throw custom excpetion
@@ -47,6 +73,31 @@ public class LegoStoreController {
 		}
 		return new ResponseEntity<List<LegoSet>>(legoSets, HttpStatus.OK);
 	}
+	
+	//returns list of lego tiems that are either out of stock or have no reviews by users
+	@GetMapping("/badItems")
+	public ResponseEntity<List<LegoSet>> findAllBadItems(){
+	
+		//List<LegoSet> legoSets = respository.findAll();
+		
+		Iterator<LegoSet> itemsIterator = respository.findAll(filterEmptyRating.or(filterOutOfStock)).iterator();
+		List<LegoSet> legoSets = new ArrayList<LegoSet>();
+		while(itemsIterator.hasNext()) {
+			legoSets.add(itemsIterator.next());
+		}
+		
+		if(legoSets == null || legoSets.isEmpty()) {
+			//or else we cna throw custom excpetion
+			//and handle this in @exceptionhandler of @controller advice
+			//throw new RuntimeException("Empty Lego Sets");
+			//as of now we are returning appropriate httpstatus
+			return new ResponseEntity<List<LegoSet>>(HttpStatus.NOT_FOUND);
+		}
+		return new ResponseEntity<List<LegoSet>>(legoSets, HttpStatus.OK);
+	}
+	
+	
+	
 	
 	@GetMapping("/{legoID}")
 	public ResponseEntity<LegoSet> findById(@PathVariable("legoID") String id){
@@ -188,12 +239,5 @@ public class LegoStoreController {
 					
 				}
 	
-	//full text search
-		@GetMapping("/fullTextSearch/{searchString}")
-		public List<LegoSet> fullTestSearch(@PathVariable String searchString){
-			
-			TextCriteria fullTextSearchCriteria = TextCriteria.forDefaultLanguage().matching(searchString);
-			
-			return respository.findAllBy(fullTextSearchCriteria);
-		}
+	
 }

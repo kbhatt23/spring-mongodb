@@ -7,6 +7,7 @@ import org.springframework.data.annotation.PersistenceConstructor;
 import org.springframework.data.annotation.Transient;
 import org.springframework.data.mongodb.core.index.IndexDirection;
 import org.springframework.data.mongodb.core.index.Indexed;
+import org.springframework.data.mongodb.core.index.TextIndexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 //mongo entity
@@ -26,7 +27,9 @@ public class LegoSet {
 	//IndexDirection.ASCENDING will sort the result in ascending order
 	@Indexed(direction = IndexDirection.ASCENDING)
 	private String theme;
-	
+	//enables full text search
+	//input string will be mathced with this index
+	@TextIndexed
 	private String name;
 
 	//@transient makes to skip the serializatin process and hence 

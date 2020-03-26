@@ -8,6 +8,7 @@ import org.springframework.data.annotation.Transient;
 import org.springframework.data.mongodb.core.index.IndexDirection;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.index.TextIndexed;
+import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 //mongo entity
@@ -44,6 +45,11 @@ public class LegoSet {
 	private DifficultyLevel difficultyLevel;
 	
 	private List<ProductReview> productReview;
+	
+	//referenced document
+	//both this and paymentmethod are indepdent collections
+	@DBRef
+	private PaymentMethod paymentMethod;
 	
 	//cusotm filed name in mongodb
 	@Field(value = "shippingInfo")
@@ -116,6 +122,14 @@ public class LegoSet {
 
 	public void setNewProperty(int newProperty) {
 		this.newProperty = newProperty;
+	}
+
+	public PaymentMethod getPaymentMethod() {
+		return paymentMethod;
+	}
+
+	public void setPaymentMethod(PaymentMethod paymentMethod) {
+		this.paymentMethod = paymentMethod;
 	}
 	
 }

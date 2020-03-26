@@ -119,4 +119,34 @@ c. Create @changeLog annottaed class in previously defined package,
  d. Create method wtih @changeset and injectMongotemplate to wrrite criteria query
  	to fetch null entries and update all in bulk with default value
  	e. start the application
+ 	
+Spring boot provides testing for each module with specific annoations:
+@springboottest: for integration tests , need to configure internal things liks mongo, jpa , mvc etc
+@datamongoTest : it allows us to @autowire mongotmeplate, mongorepository etc which springboottest can not provide
+@datajpatest: same as above but for spring jpa
+@mvcTest: for testing controller utls using mockmvc and mockito
+@webtestClient : for testing reactive contorllers
+
+When to use test for mongo repo:
+a. in case of completx queries or methods using @query: as this can change when property changes and also it helps us test the custom wrote query
+b. in case when complex QueryDSL queries for filtering
+c. in case of data projections
+d. shud not use for OOB methods and method compositions that used sporing data jpa proxies
 	
+	
+mongo Referenced collection/Document
+In no sql relationship between two documents or colelctions are not preferenced and considered as second grade citizen
+However we can have 2 different independent collections having references, we already discussed about embeded document
+
+Differences
+Embedded document															referenced document
+a. there is only one id in mongodb and that is for parent document             both the documents have indepedencet ids
+b. in embeded document no need of cascading as it is auto                     in reference document cascading can not be done. both child and parent are created indepdently
+																			child's reference of $id is kept in main document
+																			
+c. eager and lazy loadig can be done											there is only eager loading in spring jpa as whole inner child object is pre fetched eagerly
+                                                                                																					
+ d. in mongo db whole doument is kept inside parent document like json         In mongo db child document is seperate and its reference id is saved in main doicument
+ 
+ e. we can query the child document's property to fetch parent document        we can not query the parent documetn as there is a single sided relationship                                                                                 																					
+	when parent is created it creates child document on its own	

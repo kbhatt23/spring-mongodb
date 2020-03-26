@@ -15,8 +15,11 @@ import org.springframework.stereotype.Service;
 import com.learning.legostore.document.Deliveryinfo;
 import com.learning.legostore.document.DifficultyLevel;
 import com.learning.legostore.document.LegoSet;
+import com.learning.legostore.document.PaymentMethod;
+import com.learning.legostore.document.PaymentOption;
 import com.learning.legostore.document.ProductReview;
 import com.learning.legostore.repository.LegoSetRepository;
+import com.learning.legostore.repository.PaymentMethodRepository;
 //commented below just to test the data migration
 //after testing migration we can remove the below comment
 @Service
@@ -25,12 +28,19 @@ public class CommandLineInserter implements CommandLineRunner{
 	@Autowired
 	private LegoSetRepository legoSetRepository;
 	
+	@Autowired
+	private PaymentMethodRepository paymentMethodRepository;
+	
 	@Override
 	public void run(String... args) throws Exception {
 
 		System.out.println("Starting CommandLineInserter to insert data");
-		
+		paymentMethodRepository.deleteAll();
 		legoSetRepository.deleteAll();
+		
+		PaymentMethod paymentMethod = new PaymentMethod("ram bhakt hanuman", 10, PaymentOption.CASH);
+		//without creating the referenced document we cannot refer it in main class
+		paymentMethodRepository.insert(paymentMethod);
 		
 		
 		List<ProductReview> productReviews1 = IntStream.rangeClosed(1, 5)
@@ -41,7 +51,7 @@ public class CommandLineInserter implements CommandLineRunner{
 		
 		LegoSet legoSet1 = new LegoSet("batman", "home toy lego 1", DifficultyLevel.MEDIUM,
 				productReviews1, deliveryInfo);
-		
+		legoSet1.setPaymentMethod(paymentMethod);
 		//insert enforces a new entry comes
 		//no option of update
 		

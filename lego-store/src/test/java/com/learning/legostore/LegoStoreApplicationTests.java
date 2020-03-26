@@ -11,6 +11,7 @@ public class LegoStoreApplicationTests {
 
 	@Test
 	public void contextLoads() {
+		System.out.println("Testing nothins in main test");
 	}
 
 }

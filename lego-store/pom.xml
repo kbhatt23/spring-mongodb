@@ -49,6 +49,13 @@
 			<artifactId>de.flapdoodle.embed.mongo</artifactId>
 			<scope>test</scope>
 		</dependency>
+
+		<!-- Mongo Migrations -->
+		<dependency>
+			<groupId>com.github.mongobee</groupId>
+			<artifactId>mongobee</artifactId>
+			<version>0.13</version>
+		</dependency>
 	</dependencies>
 
 	<build>

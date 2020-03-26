@@ -37,6 +37,10 @@ public class LegoSet {
 	@Transient
 	private String fakeProperty;
 	
+	@Field(value = "newProperty")
+	private int newProperty;
+	
+
 	private DifficultyLevel difficultyLevel;
 	
 	private List<ProductReview> productReview;
@@ -106,5 +110,12 @@ public class LegoSet {
 		this.deliveryInfo = deliveryInfo;
 	}
 
+	public int getNewProperty() {
+		return newProperty;
+	}
+
+	public void setNewProperty(int newProperty) {
+		this.newProperty = newProperty;
+	}
 	
 }

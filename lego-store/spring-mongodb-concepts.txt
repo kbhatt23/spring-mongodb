@@ -94,3 +94,29 @@ but for advanced reporting and data projection we should use mongotempalte
 ===Full Text Search==
 A full text search can give input to any string and this tring can be value of any n number of fields or properties of document
 we can get list of documents back for whome the whole string input is present as value of any number(fixed) field values
+
+
+
+====data migration===
+3 scenarios of change in data structure in mongodb
+a. create a new collection : automaticall on server startup new collection will get created
+	with no issue with existing collections
+b. create new field in existing collection : In this case for older documents
+	the newly added field will be null, however spring data jpa will deserialize it to
+	default java value(0 for int, null for stirng and object etc)
+	and this value will be visible in api response, however better way is to use mongo bee
+	to migrate the older data in mongo db with some default value for null values of new field.
+	This will make DB in sync with application using data jpa
+c. Modify the property name : This will make the value to show null in api
+	as deserializer will use new property to fetch and that will not be present in mongo db
+	also queries will stop working. we shud not do it as best practise
+	
+Mongo BEE steps :
+a. add pom.xml depndency
+b. Create @bean for mongobeerunner -> add packages to scan etc
+c. Create @changeLog annottaed class in previously defined package, 
+ we can add order for all these classes to introduce execution order of change log classes
+ d. Create method wtih @changeset and injectMongotemplate to wrrite criteria query
+ 	to fetch null entries and update all in bulk with default value
+ 	e. start the application
+	

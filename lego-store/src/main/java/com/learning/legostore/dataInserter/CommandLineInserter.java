@@ -17,7 +17,8 @@ import com.learning.legostore.document.DifficultyLevel;
 import com.learning.legostore.document.LegoSet;
 import com.learning.legostore.document.ProductReview;
 import com.learning.legostore.repository.LegoSetRepository;
-
+//commented below just to test the data migration
+//after testing migration we can remove the below comment
 @Service
 public class CommandLineInserter implements CommandLineRunner{
 	
